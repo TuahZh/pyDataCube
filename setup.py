@@ -6,11 +6,26 @@
 
 import sys
 from setuptools import setup, find_packages
+#import glob
+import versioneer
 
+#scripts = glob.glob("scripts/*")
 
-def setup_package():
-    needs_sphinx = {'build_sphinx', 'upload_docs'}.intersection(sys.argv)
-    sphinx = ['sphinx'] if needs_sphinx else[]
-    setup(#setup_requires=sphinx,
-        entry_points=entry_points,
-        use_pyscaffold=True)
+setup(name='datacube',
+      packages=find_packages(),
+      version=versioneer.get_version(),
+      mdclass=versioneer.get_cmdclass(),
+      description="Cope with the sub-mm observations by using fits files",
+      author="Gao-Yuan Zhang",
+      author_email="zgy0106@gmail.com",
+      setup_requires=["numpy","scipy","matplotlib"],
+      install_requires=["numpy","astropy>=2.0","scipy"],
+      include_package_data=True,
+#      scripts=scripts.
+      classifiers=[
+          'Intended Audience :: Science/Research',
+          'Operating System :: OS Independent',
+          'Programming Language :: Python :: 3.6',
+          'Topic :: Scientific/Engineering :: Visualization',
+      ],
+)
