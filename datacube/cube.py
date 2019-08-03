@@ -36,8 +36,8 @@ class Cube:
             proj = wcs(self.header)
             line_ax = 3
             line = proj.sub(line_ax)
-            slice_min = int(line.topixel1d(index_min))
-            slice_max = int(line.topixel1d(index_max))
+            slice_min = int(line.wcs_world2pix(index_min))
+            slice_max = int(line.wcs_world2pix(index_max))
 
         if (mode=="sum"):
             (nn, ny, nx) = self.cube.shape
