@@ -93,15 +93,32 @@ class Cube:
     def trimnan(self):
         pass
 
-    def trim_val(self, index_min, index_max, coord="sky", unit="km/s"):
+    def trim_val(self, index_min, index_max, coord="sky", unit="km/s", inplace=False):
+        """
+        To trim the datacube according the interval of spectral velocity range
+        or the channel number range
+
+        Output:
+            new_cube     new datacube with the spectral trim
+            header       new header remain almost the same
+        """
         index_min = self._unit_conv(index_min, unit=unit)
         index_max = self._unit_conv(index_max, unit=unit)
 
         if (coord=="sky"):
             (slice_min, slice_max) = self._vel2pix(index_min, index_max)
-        pass
 
-    def _unit_conv(val, unit="m/s"):
+        new_cube = self.cube[slice_min:slice_max, :, :]
+        new_header = self.header
+        new_header.add_history("Trimed by pyDataCube")
+
+        if(inplace):
+            self.cube = new_cube
+            self.header = new_header
+
+        return new_cube, self.header
+
+    def _unit_conv(self, val, unit="m/s"):
         if (unit=="km/s"):
             return val*1000. #unit as m/s
         elif (unit=="cm/s"):
