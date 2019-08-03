@@ -59,8 +59,8 @@ class Cube:
         if (mode=="sum"):
             (nn, ny, nx) = self.cube.shape
             sum = np.zeros((ny, nx))
-            for i in xrange(nx):
-                for j in xrange(ny):
+            for i in range(nx):
+                for j in range(ny):
                     for k in range(nn)[slice_min:slice_max]:
                         if (np.isnan(self.cube[k,j,i])):
                             continue
