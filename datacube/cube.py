@@ -49,30 +49,11 @@ class Cube:
             data     2D image
             header   Try to drop all the extra header item
         """
-        if (unit=="km/s"):
-            index_min = index_min*1000. #unit as m/s
-            index_max = index_max*1000. #unit as m/s
-        elif (unit=="cm/s"):
-            index_min = index_min/100. #unit as m/s
-            index_max = index_max/100. # same
-        elif (unit=="m/s"):
-            pass
-        else:
-            raise ValueError("Cube cannot read this unit")
+        index_min = self._unit_conv(index_min, unit=unit)
+        index_max = self._unit_conv(index_max, unit=unit)
 
         if (coord=="sky"):
             (slice_min, slice_max) = self._vel2pix(index_min, index_max)
-#            proj = wcs(self.header)
-#            line_ax = ["spectral"]
-#            # sub is different from the original one
-#            line = proj.sub(line_ax)
-#            slice_min = line.wcs_world2pix(index_min, 0)
-#            slice_max = line.wcs_world2pix(index_max, 0)
-#            try:
-#                slice_min = int(slice_min[0].round())
-#                slice_max = int(slice_max[0].round())
-#            except:
-#                print("The version of astropy is not satisfied!")
 
         if (mode=="sum"):
             (nn, ny, nx) = self.cube.shape
@@ -113,15 +94,30 @@ class Cube:
         pass
 
     def trim_val(self, index_min, index_max, coord="sky", unit="km/s"):
+        index_min = self._unit_conv(index_min, unit=unit)
+        index_max = self._unit_conv(index_max, unit=unit)
+
+        if (coord=="sky"):
+            (slice_min, slice_max) = self._vel2pix(index_min, index_max)
         pass
+
+    def _unit_conv(val, unit="m/s"):
+        if (unit=="km/s"):
+            return val*1000. #unit as m/s
+        elif (unit=="cm/s"):
+            return val/100.
+        elif (unit=="m/s"):
+            pass
+        else:
+            raise ValueError("Cube cannot read this unit")
 
     def _vel2pix(self, vel_min, vel_max):
         proj = wcs(self.header)
         line_ax = ["spectral"]
         # sub is different from the original one
         line = proj.sub(line_ax)
-        slice_min = line.wcs_world2pix(vel_min, 0)
-        slice_max = line.wcs_world2pix(vel_max, 0)
+        slice_min = line.wcs_world2pix(vel_min, 1)
+        slice_max = line.wcs_world2pix(vel_max, 1)
         try:
             slice_min = int(slice_min[0].round())
             slice_max = int(slice_max[0].round())
