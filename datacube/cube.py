@@ -34,10 +34,11 @@ class Cube:
     def squash(self, index_min, index_max, coord="sky", mode="sum"):
         if (coord=="sky"):
             proj = wcs(self.header)
-            line_ax = 3
+            line_ax = ["spectral"]
+            # sub is different from the original one
             line = proj.sub(line_ax)
-            slice_min = int(line.wcs_world2pix(index_min))
-            slice_max = int(line.wcs_world2pix(index_max))
+            slice_min = int(line.wcs_world2pix(index_min, 0))
+            slice_max = int(line.wcs_world2pix(index_max, 0))
 
         if (mode=="sum"):
             (nn, ny, nx) = self.cube.shape
