@@ -31,7 +31,18 @@ class Cube:
             raise FITSTypeError
 
 
-    def squash(self, index_min, index_max, coord="sky", mode="sum"):
+    def squash(self, index_min, index_max, coord="sky", mode="sum", unit="km/s"):
+        if (unit=="km/s"):
+            index_min = index_min*1000. #unit as m/s
+            index_max = index_max*1000. #unit as m/s
+        elif (unit=="cm/s"):
+            index_min = index_min/100. #unit as m/s
+            index_max = index_max/100. # same
+        elif (unit=="m/s"):
+            pass
+        else:
+            raise ValueError("Cube cannot read this unit")
+
         if (coord=="sky"):
             proj = wcs(self.header)
             line_ax = ["spectral"]
