@@ -48,8 +48,13 @@ class Cube:
             line_ax = ["spectral"]
             # sub is different from the original one
             line = proj.sub(line_ax)
-            slice_min = int(line.wcs_world2pix(index_min, 0))
-            slice_max = int(line.wcs_world2pix(index_max, 0))
+            slice_min = line.wcs_world2pix(index_min, 0)
+            slice_max = line.wcs_world2pix(index_max, 0)
+            try:
+                slice_min = int(slice_min[0].round())
+                slice_max = int(slice_max[0].round())
+            except:
+                print("The version of astropy is not satisfied!")
 
         if (mode=="sum"):
             (nn, ny, nx) = self.cube.shape
