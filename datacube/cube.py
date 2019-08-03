@@ -20,6 +20,12 @@ from astropy.wcs import WCS as wcs
 #========Class Cube===================
 class Cube:
     def __init__(self, data, header):
+        """Initialize a Cube
+        cube is data
+        if 3D data
+        cube take the last 3 dimensions if 4D
+        2D is not acceptable
+        """
         self.data = data
         self.header = header
         if (header["NAXIS"]==3):
@@ -32,6 +38,17 @@ class Cube:
 
 
     def squash(self, index_min, index_max, coord="sky", mode="sum", unit="km/s"):
+        """
+        This function is used to squash a datacube between a velocity/spectral
+        interval.
+
+        Currently only velocity is used and the original fits file is assumed to
+        have a velocity unit of m/s
+
+        Output:
+            data     2D image
+            header   Try to drop all the extra header item
+        """
         if (unit=="km/s"):
             index_min = index_min*1000. #unit as m/s
             index_max = index_max*1000. #unit as m/s
@@ -44,21 +61,23 @@ class Cube:
             raise ValueError("Cube cannot read this unit")
 
         if (coord=="sky"):
-            proj = wcs(self.header)
-            line_ax = ["spectral"]
-            # sub is different from the original one
-            line = proj.sub(line_ax)
-            slice_min = line.wcs_world2pix(index_min, 0)
-            slice_max = line.wcs_world2pix(index_max, 0)
-            try:
-                slice_min = int(slice_min[0].round())
-                slice_max = int(slice_max[0].round())
-            except:
-                print("The version of astropy is not satisfied!")
+            (slice_min, slice_max) = self._vel2pix(index_min, index_max)
+#            proj = wcs(self.header)
+#            line_ax = ["spectral"]
+#            # sub is different from the original one
+#            line = proj.sub(line_ax)
+#            slice_min = line.wcs_world2pix(index_min, 0)
+#            slice_max = line.wcs_world2pix(index_max, 0)
+#            try:
+#                slice_min = int(slice_min[0].round())
+#                slice_max = int(slice_max[0].round())
+#            except:
+#                print("The version of astropy is not satisfied!")
 
         if (mode=="sum"):
             (nn, ny, nx) = self.cube.shape
             sum = np.zeros((ny, nx))
+            # This can be optimized
             for i in range(nx):
                 for j in range(ny):
                     for k in range(nn)[slice_min:slice_max]:
@@ -74,19 +93,43 @@ class Cube:
             header_new.__delitem__("CRPIX4")
             header_new.__delitem__("CDELT4")
             header_new.__delitem__("CRVAL4")
+            header_new.__delitem__("CROTA4")
             header_new["NAXIS"] = 2
             header_new.__delitem__("NAXIS3")
             header_new.__delitem__("CTYPE3")
             header_new.__delitem__("CRPIX3")
             header_new.__delitem__("CDELT3")
             header_new.__delitem__("CRVAL3")
+            header_new.__delitem__("CROTA3")
             header_new.__delitem__("RESTFREQ")
             header_new.__delitem__("SPECSYS")
             header_new.__delitem__("DATAMAX")
             header_new.__delitem__("DATAMIN")
-            header_new.add_history("squashed by GY")
+            header_new.add_history("Squashed by pyDataCube")
 
         return sum, header_new
+
+    def trimnan(self):
+        pass
+
+    def trim_val(self, index_min, index_max, coord="sky", unit="km/s"):
+        pass
+
+    def _vel2pix(self, vel_min, vel_max):
+        proj = wcs(self.header)
+        line_ax = ["spectral"]
+        # sub is different from the original one
+        line = proj.sub(line_ax)
+        slice_min = line.wcs_world2pix(vel_min, 0)
+        slice_max = line.wcs_world2pix(vel_max, 0)
+        try:
+            slice_min = int(slice_min[0].round())
+            slice_max = int(slice_max[0].round())
+        except:
+            print("The version of astropy is not satisfied!")
+
+        return (slice_min, slice_max)
+
 
 #    def channel_maps():
 
