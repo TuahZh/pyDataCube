@@ -136,7 +136,7 @@ class Cube:
         #new_header["CRVAL3"]
         #new_header["CDELT3"]
         #The central pixel should be changed
-        with warnings.catch_warnins():
+        with warnings.catch_warnings():
             warnings.filterwarnings("error")
             try:
                 # slice_min and slice_max was for python, has a 0-origin
