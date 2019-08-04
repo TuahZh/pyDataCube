@@ -60,16 +60,18 @@ class Cube:
 
         if (mode=="sum"):
             (nn, ny, nx) = self.cube.shape
-            sum = np.zeros((ny, nx))
+            sum_cube = np.zeros((ny, nx))
             # This can be optimized
-            for i in range(nx):
-                for j in range(ny):
-                    for k in range(nn)[slice_min:slice_max]:
-                        if (np.isnan(self.cube[k,j,i])):
-                            continue
-
-                        sum[j,i] += \
-                            self.cube[k,j,i]*self.header["CDELT3"]/1000.
+#            for i in range(nx):
+#                for j in range(ny):
+#                    for k in range(nn)[slice_min:slice_max]:
+#                        if (np.isnan(self.cube[k,j,i])):
+#                            continue
+#
+#                        sum[j,i] += \
+#                            self.cube[k,j,i]*self.header["CDELT3"]/1000.
+            sum_cube = self.cube.sum(axis=0)* \
+                  self.header["CDELT3"]/1000. # The velocity has a unit m/s
 
             header_new = self.header.copy()
             header_new.__delitem__("NAXIS4")
@@ -91,7 +93,7 @@ class Cube:
             header_new.__delitem__("DATAMIN")
             header_new.add_history("Squashed by pyDataCube")
 
-        return sum, header_new
+        return sum_cube, header_new
 
     def trimnan(self):
         pass
