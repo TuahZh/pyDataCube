@@ -26,10 +26,12 @@ class Cube:
         cube take the last 3 dimensions if 4D
         2D is not acceptable
         """
+        # link 
         self.data = data
         self.header = header
+        # hard copy
         if (header["NAXIS"]==3):
-            self.cube = data
+            self.cube = data.copy()
         elif (header["NAXIS"]==4):
             self.cube = np.zeros(data.shape[1:3])
             self.cube = data[0,:,:,:]
