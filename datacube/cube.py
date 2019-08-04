@@ -115,6 +115,11 @@ class Cube:
         if (coord=="sky"):
             (slice_min, slice_max) = self._vel2pix(index_min, index_max)
 
+        #index_list = arange(self.cube.shape[0]) + 1. # fits has an origin from 1
+        #cent_floor = np.floor(self.header["CRPIX3"])
+        #cent_ceiling = np.ceiling(self.header["CRPIX3"])
+        #index_floor = index_list[cent_floor]
+        #index_ceiling = index_list[cent_ceiling]
         if (inplace):
             new_cube = self.cube[slice_min:slice_max, :, :]
             new_header = self.header
@@ -123,6 +128,10 @@ class Cube:
             new_header = self.header.copy()
 
         new_header.add_history("Trimed by pyDataCube")
+        #new_header["CRVAL3"]
+        #new_header["CDELT3"]
+        #The central pixel should be changed
+        new_header["CRPIX3"] = _pix_trim(self.header["CRPIX3"], slice_min, slice_max)
 
         return new_cube, new_header
 
@@ -151,6 +160,9 @@ class Cube:
 
         return (slice_min, slice_max)
 
+    def _pix_trim(d, vmin, vmax):
+        dd = (d+vmin)/(vmin+vmax)
+        return np.clip(dd, 0, 1)
 
 #    def channel_maps():
 
@@ -158,9 +170,6 @@ class Cube:
 #=================Class Cube======================
 
 #=================Function mytrim=================
-def mytrim(d, vmin, vmax):
-    dd = (d+vmin)/(vmin+vmax)
-    return np.clip(dd, 0, 1)
 #=================Function mytrim=================
 
 
