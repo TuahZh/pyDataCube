@@ -137,10 +137,10 @@ class Cube:
             try:
                 # slice_min and slice_max was for python, has a 0-origin
                 # the slice_max may not be right but not important
-                new_header["CRPIX1"] = self._pix_trim(self.header["CRPIX1"], \
+                nheader["CRPIX1"] = self._pix_trim(self.header["CRPIX1"], \
                                                       1+1, nx-1, \
                                                       origin=1)
-                new_header["CRPIX2"] = self._pix_trim(self.header["CRPIX2"], \
+                nheader["CRPIX2"] = self._pix_trim(self.header["CRPIX2"], \
                                                       1+1, ny-1, \
                                                       origin=1)
             except UserWarning:
