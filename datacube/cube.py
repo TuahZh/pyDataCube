@@ -30,11 +30,12 @@ class Cube:
         self.data = data
         self.header = header
         # hard copy
+        self._header_copy = header.copy()
         if (header["NAXIS"]==3):
             self.cube = data.copy()
         elif (header["NAXIS"]==4):
-            self.cube = np.zeros(data.shape[1:3])
-            self.cube = data[0,:,:,:]
+#            self.cube = np.zeros(data.shape[1:3])
+            self.cube = (data[0,:,:,:]).copy()
         else:
             raise FITSTypeError
 
@@ -70,7 +71,7 @@ class Cube:
                         sum[j,i] += \
                             self.cube[k,j,i]*self.header["CDELT3"]/1000.
 
-            header_new = self.header
+            header_new = self.header.copy()
             header_new.__delitem__("NAXIS4")
             header_new.__delitem__("CTYPE4")
             header_new.__delitem__("CRPIX4")
@@ -110,15 +111,16 @@ class Cube:
         if (coord=="sky"):
             (slice_min, slice_max) = self._vel2pix(index_min, index_max)
 
-        new_cube = self.cube[slice_min:slice_max, :, :]
-        new_header = self.header
+        if (inplace):
+            new_cube = self.cube[slice_min:slice_max, :, :]
+            new_header = self.header
+        else:
+            new_cube = self.cube.copy()[slice_min:slice_max, :,:]
+            new_header = self.header.copy()
+
         new_header.add_history("Trimed by pyDataCube")
 
-        if(inplace):
-            self.cube = new_cube
-            self.header = new_header
-
-        return new_cube, self.header
+        return new_cube, new_header
 
     def _unit_conv(self, val, unit="m/s"):
         if (unit=="km/s"):
