@@ -49,7 +49,7 @@ class Cube:
         have a velocity unit of m/s
 
         Output:
-            data     2D image
+            data     2D image; unit is K*km/s
             header   Try to drop all the extra header item
         """
         index_min = self._unit_conv(index_min, unit=unit)
@@ -74,24 +74,26 @@ class Cube:
                   self.header["CDELT3"]/1000. # The velocity has a unit m/s
 
             header_new = self.header.copy()
-            header_new.__delitem__("NAXIS4")
-            header_new.__delitem__("CTYPE4")
-            header_new.__delitem__("CRPIX4")
-            header_new.__delitem__("CDELT4")
-            header_new.__delitem__("CRVAL4")
-            header_new.__delitem__("CROTA4")
-            header_new["NAXIS"] = 2
-            header_new.__delitem__("NAXIS3")
-            header_new.__delitem__("CTYPE3")
-            header_new.__delitem__("CRPIX3")
-            header_new.__delitem__("CDELT3")
-            header_new.__delitem__("CRVAL3")
-            header_new.__delitem__("CROTA3")
-            header_new.__delitem__("RESTFREQ")
-            header_new.__delitem__("SPECSYS")
-            header_new.__delitem__("DATAMAX")
-            header_new.__delitem__("DATAMIN")
-            header_new.add_history("Squashed by pyDataCube")
+            try:
+                header_new.__delitem__("NAXIS4")
+                header_new.__delitem__("CTYPE4")
+                header_new.__delitem__("CRPIX4")
+                header_new.__delitem__("CDELT4")
+                header_new.__delitem__("CRVAL4")
+                header_new.__delitem__("CROTA4")
+            finally:
+                header_new["NAXIS"] = 2
+                header_new.__delitem__("NAXIS3")
+                header_new.__delitem__("CTYPE3")
+                header_new.__delitem__("CRPIX3")
+                header_new.__delitem__("CDELT3")
+                header_new.__delitem__("CRVAL3")
+                header_new.__delitem__("CROTA3")
+                header_new.__delitem__("RESTFREQ")
+                header_new.__delitem__("SPECSYS")
+                header_new.__delitem__("DATAMAX")
+                header_new.__delitem__("DATAMIN")
+                header_new.add_history("Squashed by pyDataCube")
 
         return sum_cube, header_new
 
