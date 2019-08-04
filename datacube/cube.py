@@ -245,6 +245,22 @@ class Cube:
         dd = d-vmin+origin
         return dd
 
+    def _get_line(self, pos, ncube=None, origin=1):
+        """
+        Get the spectral line from a position
+        """
+        if (ncube==None):
+            ncube = self.cube
+
+        if (len(pos)!=2):
+            raise ValueError("Length of position should be 2!")
+
+        pos[0] -= origin
+        pos[1] -= origin
+
+        return ncube[:, pos[1], pos[0]]
+
+
 #    def channel_maps():
 
 
