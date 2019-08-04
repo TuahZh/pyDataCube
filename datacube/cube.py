@@ -180,23 +180,23 @@ class Cube:
 #    def _pix_trim(self, d, vmin, vmax):
 #        dd = (d+vmin)/(vmin+vmax)
 #        return np.clip(dd, 0, 1)
-     def _pix_trim(self, d, vmin, vmax, origin=1):
-         """_pix_trim
-         return a new index with the cut off edge vmin and vmax
-         d must be in beween vmin and vmax? no
-         d can be out of the range, but a warning is printed
-         origin=1 means for Fits or Fortran
-         origin=0 means for Python or C
-         """
-         if (np.isscaler(d)):
-            if (d<vmin or d>vmax):
-                warnings.warn("Warning: changed central pix is not within the interval!")
-         else:
-             if (np.logical_or(d<vmin,d>vmax).any()):
-                warnings.warn("Warning: changed central pix is not within the interval!")
+    def _pix_trim(self, d, vmin, vmax, origin=1):
+    """_pix_trim
+    return a new index with the cut off edge vmin and vmax
+    d must be in beween vmin and vmax? no
+    d can be out of the range, but a warning is printed
+    origin=1 means for Fits or Fortran
+    origin=0 means for Python or C
+    """
+        if (np.isscaler(d)):
+           if (d<vmin or d>vmax):
+               warnings.warn("Warning: changed central pix is not within the interval!")
+        else:
+            if (np.logical_or(d<vmin,d>vmax).any()):
+               warnings.warn("Warning: changed central pix is not within the interval!")
 
-         dd = d-vmin+origin
-         return dd
+        dd = d-vmin+origin
+        return dd
 
 #    def channel_maps():
 
