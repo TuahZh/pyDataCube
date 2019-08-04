@@ -188,7 +188,7 @@ class Cube:
         origin=1 means for Fits or Fortran
         origin=0 means for Python or C
         """
-        if (np.isscaler(d)):
+        if (np.isscalar(d)):
            if (d<vmin or d>vmax):
                warnings.warn("Warning: changed central pix is not within the interval!")
         else:
