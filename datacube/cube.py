@@ -101,8 +101,55 @@ class Cube:
 
         return sum_cube, header_new
 
-    def trimnan(self):
-        pass
+    def trimnan(self, iterative=True, inplace=False, max_iter=5):
+        """
+        To trim the outer nan part from the datacube
+        A ring of pixel is dropped every time until there is no nan left
+        The 3rd dimension (spectral) is assumed to be all good without nan
+        """
+        if (inplace):
+            new_cube = self.cube
+            new_hearder = self.header
+        else:
+            new_cube = self.cube.copy()
+            new_hearder = self.header.copy()
+
+        num_iter = 0
+        while (np.isnan(new_cube).any()):
+            new_cube, new_header = self._trim_one(new_cube, new_header)
+            num_iter += 1
+            if (num_iter>max_iter):
+                warnings.warn("The new file may still contain nan values!")
+                break
+
+        new_header.add_history("Trim the nan part in the datacube (by pyDataCube)")
+        return new_cube, new_header
+
+    def _trim_one(self, ncube, nheader):
+        """
+        To drop the outmost ring of the cube
+        """
+        ny = ncube.shape[1]
+        nx = ncube.shape[2]
+        ncube = ncube[:, 1:-1, 1:-1]
+        with warnings.catch_warnings():
+            warnings.filterwarnings("error")
+            try:
+                # slice_min and slice_max was for python, has a 0-origin
+                # the slice_max may not be right but not important
+                new_header["CRPIX1"] = self._pix_trim(self.header["CRPIX1"], \
+                                                      1+1, nx-1, \
+                                                      origin=1)
+                new_header["CRPIX2"] = self._pix_trim(self.header["CRPIX2"], \
+                                                      1+1, ny-1, \
+                                                      origin=1)
+            except UserWarning:
+                warnings.warn("Warning: changed central pix is not within the interval!")
+                pass
+                # here need something to do with CRVAL and CRPIX
+
+        return ncube, nheader
+
 
     def trim_val(self, index_min, index_max, coord="sky", unit="km/s", inplace=False):
         """
