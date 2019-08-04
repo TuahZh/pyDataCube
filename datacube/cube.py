@@ -255,10 +255,7 @@ class Cube:
         if (len(pos)!=2):
             raise ValueError("Length of position should be 2!")
 
-        pos[0] -= origin
-        pos[1] -= origin
-
-        return ncube[:, pos[1], pos[0]]
+        return ncube[:, pos[1]-origin, pos[0]-origin]
 
 
 #    def channel_maps():
