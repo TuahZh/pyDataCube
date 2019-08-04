@@ -109,10 +109,10 @@ class Cube:
         """
         if (inplace):
             new_cube = self.cube
-            new_hearder = self.header
+            new_header = self.header
         else:
             new_cube = self.cube.copy()
-            new_hearder = self.header.copy()
+            new_header = self.header.copy()
 
         num_iter = 0
         while (np.isnan(new_cube).any()):
