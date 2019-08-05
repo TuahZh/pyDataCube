@@ -123,6 +123,17 @@ class Cube:
                 break
 
         new_header.add_history("Trim the nan part in the datacube (by pyDataCube)")
+        if (new_header["NAXIS"]==4):
+            try:
+                header_new.__delitem__("NAXIS4")
+                header_new.__delitem__("CTYPE4")
+                header_new.__delitem__("CRPIX4")
+                header_new.__delitem__("CDELT4")
+                header_new.__delitem__("CRVAL4")
+                header_new.__delitem__("CROTA4")
+            finally:
+                header_new["NAXIS"] = 3
+
         return new_cube, new_header
 
     def _trim_one(self, ncube, nheader):
@@ -194,6 +205,18 @@ class Cube:
                 warnings.warn("Warning: changed central pix is not within the interval!")
                 pass
                 # here need something to do with CRVAL and CRPIX
+
+        if (new_header["NAXIS"]==4):
+            try:
+                header_new.__delitem__("NAXIS4")
+                header_new.__delitem__("CTYPE4")
+                header_new.__delitem__("CRPIX4")
+                header_new.__delitem__("CDELT4")
+                header_new.__delitem__("CRVAL4")
+                header_new.__delitem__("CROTA4")
+            finally:
+                header_new["NAXIS"] = 3
+
 
         return new_cube, new_header
 
