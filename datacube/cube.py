@@ -125,14 +125,14 @@ class Cube:
         new_header.add_history("Trim the nan part in the datacube (by pyDataCube)")
         if (new_header["NAXIS"]==4):
             try:
-                header_new.__delitem__("NAXIS4")
-                header_new.__delitem__("CTYPE4")
-                header_new.__delitem__("CRPIX4")
-                header_new.__delitem__("CDELT4")
-                header_new.__delitem__("CRVAL4")
-                header_new.__delitem__("CROTA4")
+                new_header.__delitem__("NAXIS4")
+                new_header.__delitem__("CTYPE4")
+                new_header.__delitem__("CRPIX4")
+                new_header.__delitem__("CDELT4")
+                new_header.__delitem__("CRVAL4")
+                new_header.__delitem__("CROTA4")
             finally:
-                header_new["NAXIS"] = 3
+                new_header["NAXIS"] = 3
 
         return new_cube, new_header
 
@@ -208,14 +208,14 @@ class Cube:
 
         if (new_header["NAXIS"]==4):
             try:
-                header_new.__delitem__("NAXIS4")
-                header_new.__delitem__("CTYPE4")
-                header_new.__delitem__("CRPIX4")
-                header_new.__delitem__("CDELT4")
-                header_new.__delitem__("CRVAL4")
-                header_new.__delitem__("CROTA4")
+                new_header.__delitem__("NAXIS4")
+                new_header.__delitem__("CTYPE4")
+                new_header.__delitem__("CRPIX4")
+                new_header.__delitem__("CDELT4")
+                new_header.__delitem__("CRVAL4")
+                new_header.__delitem__("CROTA4")
             finally:
-                header_new["NAXIS"] = 3
+                new_header["NAXIS"] = 3
 
 
         return new_cube, new_header
