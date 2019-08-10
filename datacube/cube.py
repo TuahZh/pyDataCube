@@ -272,7 +272,7 @@ class Cube:
         """
         Get the spectral line from a position
         """
-        if (ncube==None):
+        if (ncube is None):
             ncube = self.cube
 
         if (len(pos)!=2):
@@ -285,7 +285,7 @@ class Cube:
         """
         Get the average spectrum in the FOV
         """
-        if (ncube==None):
+        if (ncube is None):
             ncube = self.cube
 
         self.catch_line = ncube.mean(axis=(1,2))
@@ -297,16 +297,16 @@ class Cube:
         return a rms and
         a deducted line
         """
-        if(win==None):
+        if(win is None):
             raise ValueError("In function baseline() parameter \"win\" must be specific.")
-        if(line==None):
+        if(line is None):
             line = self.catch_line
         pass
 
     def _line_velo(self, line=None, header=None):
-        if (line==None):
+        if (line is None):
             line = self.catch_line
-        if (header==None):
+        if (header is None):
             header = self.header
         line_ind = np.arange(line.size)
         proj = wcs(self.header)
