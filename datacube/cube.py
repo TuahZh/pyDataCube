@@ -308,7 +308,7 @@ class Cube:
         tmp_line[self._set_win(line_velo, win)] = np.nan
         idx = np.isfinite(line_velo) & np.isfinite(tmp_line)
         parr = np.polyfit(line_velo[idx], tmp_line[idx], order)
-        rms = np.sqrt(np.mean((np.polyval(parr, line_velo)[idx]-tmp_velo[idx])**2))
+        rms = np.sqrt(np.mean((np.polyval(parr, line_velo)[idx]-tmp_line[idx])**2))
         if(deduct):
             self.catch_line = line-np.polyval(parr, line_velo)
             return rms, self.catch_line
