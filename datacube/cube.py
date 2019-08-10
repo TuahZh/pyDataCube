@@ -278,7 +278,70 @@ class Cube:
         if (len(pos)!=2):
             raise ValueError("Length of position should be 2!")
 
-        return ncube[:, pos[1]-origin, pos[0]-origin]
+        self.catch_line = ncube[:, pos[1]-origin, pos[0]-origin]
+        return self.catch_line
+
+    def _get_average_line(self, ncube=None):
+        """
+        Get the average spectrum in the FOV
+        """
+        if (ncube==None):
+            ncube = self.cube
+
+        self.catch_line = ncube.mean(axis=(1,2))
+        return self.catch_line
+
+    def baseline(self, line=None, deduct=True, win=None, unit="km/s", order=1):
+        """
+        Perform a baseline fit
+        return a rms and
+        a deducted line
+        """
+        if(win==None):
+            raise ValueError("In function baseline() parameter \"win\" must be specific.")
+        if(line==None):
+            line = self.catch_line
+        pass
+
+    def _line_velo(self, line=None, header=None):
+        if (line==None):
+            line = self.catch_line
+        if (header==None):
+            header = self.header
+        line_ind = np.arange(line.size)
+        proj = wcs(self.header)
+        line_ax = ["spectral"]
+        # sub is different from the original one
+        line_wcs = proj.sub(line_ax)
+        line_velo = line_wcs.wcs_world2pix(line_ind, 0)
+        self.catch_line = line_velo
+        print("line_velo shape is:")
+        print(line_velo)
+        return line_velo
+
+    def _set_win(self, velo, vrange, unit="km/s", inverse=False):
+        if (len(vrange)%2!=0):
+            raise ValueError("Velocity range must be an even number!")
+        vrange_list = list(vrange)
+        win_velo = np.full(velo.shape, False)
+        while(len(vrange_list)>0):
+            vmin = vrange_list[0]
+            vmax = vrange_list[1]
+            #print(vmin, vmax)
+            if (vmin>vmax):
+                vtmp = vmin
+                vmin = vmax
+                vmax = vtmp
+            #remove the first two elements.
+            vrange_list.pop(0)
+            vrange_list.pop(0)
+            win_velo = np.logical_or(win_velo, np.logical_and(velo<=vmax, velo>=vmin))
+            #print(win_velo.any())
+
+        if (inverse):
+            win_velo = np.logical_not(win_velo)
+
+        return win_velo
 
 
 #    def channel_maps():
