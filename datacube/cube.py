@@ -314,10 +314,10 @@ class Cube:
         # sub is different from the original one
         line_wcs = proj.sub(line_ax)
         line_velo = line_wcs.wcs_world2pix(line_ind, 0)
-        self.catch_line = line_velo
-        print("line_velo shape is:")
-        print(line_velo)
-        return line_velo
+        self.catch_line_velo = line_velo[0]
+#        print("line_velo shape is:")
+#        print(line_velo)
+        return self.catch_line_velo
 
     def _set_win(self, velo, vrange, unit="km/s", inverse=False):
         if (len(vrange)%2!=0):
