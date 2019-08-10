@@ -16,6 +16,7 @@ except:
     import pyfits
 #import pywcsgrid2
 from astropy.wcs import WCS as wcs
+from scipy.optimize import curve_fit
 import warnings
 #
 #========Class Cube===================
@@ -293,7 +294,7 @@ class Cube:
 
     def baseline(self, line=None, deduct=True, win=None, unit="km/s", order=1):
         """
-        Perform a baseline fit
+        Perform a baseline fit (currently use np.polyfit)
         return a rms and
         a deducted line
         """
@@ -301,9 +302,23 @@ class Cube:
             raise ValueError("In function baseline() parameter \"win\" must be specific.")
         if(line is None):
             line = self.catch_line
-        pass
+
+        tmp_line = line.copy()
+        line_velo = _line_velo(line=line)
+        tmp_line[_set_win(line_velo, win)] = np.nan
+        idx = np.isfinite(line_velo) & np.isfinite(tmp_line)
+        parr = np.polyfit(line_velo[idx], tmp_line[idx], order)
+        rms = np.sqrt(np.mean((np.polyval(parr, line_velo)[idx]-tmp_velo[idx])**2))
+        if(deduct):
+            self.catch_line = line-np.polyval(parr, line_velo)
+            return rms, self.catch_line
+        else:
+            return rms
 
     def _line_velo(self, line=None, header=None):
+        """
+        Get velocity distribution from header
+        """
         if (line is None):
             line = self.catch_line
         if (header is None):
@@ -320,6 +335,9 @@ class Cube:
         return self.catch_line_velo
 
     def _set_win(self, velo, vrange, unit="km/s", inverse=False):
+        """
+        Set a window range on a spectrum
+        """
         if (len(vrange)%2!=0):
             raise ValueError("Velocity range must be an even number!")
         vrange_list = list(vrange)
