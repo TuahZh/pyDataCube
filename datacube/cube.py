@@ -86,6 +86,8 @@ class Cube:
                 header_new.__delitem__("CDELT4")
                 header_new.__delitem__("CRVAL4")
                 header_new.__delitem__("CROTA4")
+            except KeyError:
+                pass
             finally:
                 header_new["NAXIS"] = 2
                 header_new.__delitem__("NAXIS3")
