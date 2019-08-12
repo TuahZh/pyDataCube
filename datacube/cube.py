@@ -332,7 +332,7 @@ class Cube:
         line_ax = ["spectral"]
         # sub is different from the original one
         line_wcs = proj.sub(line_ax)
-        line_velo = line_wcs.wcs_world2pix(line_ind, 0)
+        line_velo = line_wcs.wcs_pix2world(line_ind, 0)
         self.catch_line_velo = line_velo[0]
 #        print("line_velo shape is:")
 #        print(line_velo)
