@@ -319,7 +319,7 @@ class Cube:
         else:
             return rms
 
-    def _line_velo(self, line=None, header=None):
+    def _line_velo(self, line=None, header=None, unit="km/s"):
         """
         Get velocity distribution from header
         """
@@ -333,7 +333,7 @@ class Cube:
         # sub is different from the original one
         line_wcs = proj.sub(line_ax)
         line_velo = line_wcs.wcs_pix2world(line_ind, 0)
-        self.catch_line_velo = line_velo[0]
+        self.catch_line_velo = line_velo[0]/1000. # convert to unit "km/s"
 #        print("line_velo shape is:")
 #        print(line_velo)
         return self.catch_line_velo
