@@ -113,11 +113,11 @@ class Cube:
             interval = (velo_max-velo_min)/num
         else:
             num = (velo_max-velo_min)/interval
-            num = int(np.ceil(num)
+            num = int(np.ceil(num))
 
         velo_mins = np.arange(num)*interval+velo_min
         velo_maxs = velo_mins+interval
-        datas = np.zeros(num, self.cube.shape[1], self.cube.shape[2]))
+        datas = np.zeros((num, self.cube.shape[1], self.cube.shape[2]))
         headers = {}
         for ii in range(num):
             datas[ii,:,:], headers[ii] = self.squash(velo_mins[ii], velo_maxs[ii])
