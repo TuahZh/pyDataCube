@@ -104,6 +104,24 @@ class Cube:
 
         return sum_cube, header_new
 
+    def channel_squash(self, velo_min, velo_max, interval=1, unit="km/s", num=None):
+        """
+        Squash the data cube every certain interval
+        currently only support km/s
+        """
+        if (num is not None):
+            interval = (velo_max-velo_min)/num
+        else:
+            num = (velo_max-velo_min)/interval
+        velo_mins = np.arange(num)*interval+velo_min
+        velo_maxs = velo_mins+interval
+        datas = zeros((num, self.cube.shape[1], self.cube.shape[2]))
+        headers = {}
+        for ii in range(num):
+            datas[ii,:,:], headers[ii] = self.squash(velo_mins[ii], velo_maxs[ii])
+
+        return datas, headers
+
     def trimnan(self, iterative=True, inplace=False, max_iter=5):
         """
         To trim the outer nan part from the datacube
