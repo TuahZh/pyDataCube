@@ -292,7 +292,7 @@ class Cube:
         self.catch_line = ncube.mean(axis=(1,2))
         return self.catch_line
 
-    def baseline(self, line=None, deduct=True, win=None, unit="km/s", order=1):
+    def baseline(self, line=None, deduct=True, win=None, unit="km/s", order=1, full=False):
         """
         Perform a baseline fit (currently use np.polyfit)
         return a rms and
@@ -309,7 +309,11 @@ class Cube:
         idx = np.isfinite(line_velo) & np.isfinite(tmp_line)
         parr = np.polyfit(line_velo[idx], tmp_line[idx], order)
         rms = np.sqrt(np.mean((np.polyval(parr, line_velo)[idx]-tmp_line[idx])**2))
-        if(deduct):
+
+        if(full):
+            self.catch_line = line-np.polyval(parr, line_velo)
+            return rms, self.catch_line, np.polyval(parr,line_velo)
+        elif(deduct):
             self.catch_line = line-np.polyval(parr, line_velo)
             return rms, self.catch_line
         else:
