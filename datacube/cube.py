@@ -391,32 +391,69 @@ class Cube:
 
         return win_velo
 
-    def get_grid_spec(self, xsize, ysize, weight="distance"):
+    def _regrid_spec(self, overwrite=False):
         """
-        To get the spectra in 2D grids
+        To regrid to show the spectra clearer (for grid_spec with pywcsgrid2)
+        Regrid the cube 4 \times 4 pixels one time
         """
         (nz, ny, nx) = self.cube.shape
-        if (xsize>nx or ysize>ny):
-            raise ValueError("Grid size must be smaller than the original pixel size!")
-        numx = np.floor(nx/xsize)
-        numy = np.floor(ny/ysize)
-        self.grid_spec = np.zeros((nz, ysize, xsize))
-        self.grid_header = self.header.copy()
-        if (self.grid_header["NAXIS"]==4):
-            try:
-                new_header.__delitem__("NAXIS4")
-                new_header.__delitem__("CTYPE4")
-                new_header.__delitem__("CRPIX4")
-                new_header.__delitem__("CDELT4")
-                new_header.__delitem__("CRVAL4")
-                new_header.__delitem__("CROTA4")
-            except KeyError:
-                pass
-            finally:
-                new_header["NAXIS"] = 3
+        if (nx%2!=0): nx-=1
+        if (ny%2!=0): ny-=1
+        #if (xsize>nx or ysize>ny):
+        #    raise ValueError("Grid size must be smaller than the original pixel size!")
+        new_cube = np.zeros((nz,ny//2,nx//2))
+        for kk in range(nz):
+            for jjj in range(ny//2):
+                for iii in range(nx//2):
+                    jj = jjj*2
+                    ii = iii*2
+                    new_grid = [self.cube[kk,jj,ii], self.cube[kk,jj,ii+1], \
+                                self.cube[kk,jj+1,ii], self.cube[kk,jj+1,ii+1]]
+                    new_data[kk,jjj,iii] = np.mean(new_grid)
 
+        if (overwrite):
+            self.cube = new_data
+            new_header = self.header
+        else:
+            new_header = self.header.copy()
 
-        pass
+        if (new_header['CRPIX1'] %2!=0):
+            new_header['CRVAL1'] -= 0.5*new_header['CDELT1']
+        else:
+            new_header['CRVAL1'] += 0.5*new_header['CDELT1']
+
+        new_header['CRPIX1'] //= 2
+
+        if (new_header['CRPIX2'] %2!=0):
+            new_header['CRVAL2'] -= 0.5*new_header['CDELT2']
+        else:
+            new_header['CRVAL2'] += 0.5*new_header['CDELT2']
+
+        new_header['CRPIX2'] //= 2
+        new_header['CDELT1'] *= 2.
+        new_header['CDELT2'] *= 2.
+
+        return new_data, new_header
+#        time_now = time.asctime(time.localtime())
+#        hdulist[0].header.add_history(time_now+'by python regrid of GY')
+
+#
+#        numx = np.floor(nx/xsize)
+#        numy = np.floor(ny/ysize)
+#        self.grid_spec = np.zeros((nz, ysize, xsize))
+#        self.grid_header = self.header.copy()
+#        if (self.grid_header["NAXIS"]==4):
+#            try:
+#                new_header.__delitem__("NAXIS4")
+#                new_header.__delitem__("CTYPE4")
+#                new_header.__delitem__("CRPIX4")
+#                new_header.__delitem__("CDELT4")
+#                new_header.__delitem__("CRVAL4")
+#                new_header.__delitem__("CROTA4")
+#            except KeyError:
+#                pass
+#            finally:
+#                new_header["NAXIS"] = 3
 
 
 #    def channel_maps():
