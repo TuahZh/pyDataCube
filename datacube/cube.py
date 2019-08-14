@@ -154,6 +154,8 @@ class Cube:
                 new_header.__delitem__("CDELT4")
                 new_header.__delitem__("CRVAL4")
                 new_header.__delitem__("CROTA4")
+            except KeyError:
+                pass
             finally:
                 new_header["NAXIS"] = 3
 
@@ -237,6 +239,8 @@ class Cube:
                 new_header.__delitem__("CDELT4")
                 new_header.__delitem__("CRVAL4")
                 new_header.__delitem__("CROTA4")
+            except KeyError:
+                pass
             finally:
                 new_header["NAXIS"] = 3
 
@@ -386,6 +390,33 @@ class Cube:
             win_velo = np.logical_not(win_velo)
 
         return win_velo
+
+    def get_grid_spec(self, xsize, ysize, weight="distance"):
+        """
+        To get the spectra in 2D grids
+        """
+        (nz, ny, nx) = self.cube.shape
+        if (xsize>nx or ysize>ny):
+            raise ValueError("Grid size must be smaller than the original pixel size!")
+        numx = np.floor(nx/xsize)
+        numy = np.floor(ny/ysize)
+        self.grid_spec = np.zeros((nz, ysize, xsize))
+        self.grid_header = self.header.copy()
+        if (self.grid_header["NAXIS"]==4):
+            try:
+                new_header.__delitem__("NAXIS4")
+                new_header.__delitem__("CTYPE4")
+                new_header.__delitem__("CRPIX4")
+                new_header.__delitem__("CDELT4")
+                new_header.__delitem__("CRVAL4")
+                new_header.__delitem__("CROTA4")
+            except KeyError:
+                pass
+            finally:
+                new_header["NAXIS"] = 3
+
+
+        pass
 
 
 #    def channel_maps():
