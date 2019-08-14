@@ -409,10 +409,10 @@ class Cube:
                     ii = iii*2
                     new_grid = [self.cube[kk,jj,ii], self.cube[kk,jj,ii+1], \
                                 self.cube[kk,jj+1,ii], self.cube[kk,jj+1,ii+1]]
-                    new_data[kk,jjj,iii] = np.mean(new_grid)
+                    new_cube[kk,jjj,iii] = np.mean(new_grid)
 
         if (overwrite):
-            self.cube = new_data
+            self.cube = new_cube
             new_header = self.header
         else:
             new_header = self.header.copy()
@@ -433,7 +433,7 @@ class Cube:
         new_header['CDELT1'] *= 2.
         new_header['CDELT2'] *= 2.
 
-        return new_data, new_header
+        return new_cube, new_header
 #        time_now = time.asctime(time.localtime())
 #        hdulist[0].header.add_history(time_now+'by python regrid of GY')
 
